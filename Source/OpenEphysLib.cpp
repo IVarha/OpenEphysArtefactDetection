@@ -31,7 +31,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #else
 #define EXPORT __attribute__((visibility("default")))
 #endif
-
+#include <fftw3.h>
 using namespace Plugin;
 
 #define NUM_PLUGINS 1
@@ -42,7 +42,7 @@ extern "C" EXPORT void getLibInfo(Plugin::LibraryInfo *info)
 	Should not be changed to ensure it is always equal to the one used in the latest codebase.
 	The GUI refueses to load plugins with mismatched API versions */
 	info->apiVersion = PLUGIN_API_VER;
-	info->name = "Root Mean Square";
+	info->name = "STN Artefact Detection";
 	info->libVersion = "0.1.0";
 	info->numPlugins = NUM_PLUGINS;
 }
@@ -57,7 +57,7 @@ extern "C" EXPORT int getPluginInfo(int index, Plugin::PluginInfo *info)
 		info->type = Plugin::Type::PROCESSOR;
 
 		// Processor name
-		info->processor.name = "Root Mean Square"; // Processor name shown in the GUI
+		info->processor.name = "STN Artefact Detection"; // Processor name shown in the GUI
 
 		// Type of processor. Can be FILTER, SOURCE, SINK or UTILITY. Specifies where on the processor list will appear
 		info->processor.type = Processor::Type::FILTER;

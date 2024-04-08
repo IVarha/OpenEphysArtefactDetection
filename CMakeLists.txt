@@ -29,6 +29,13 @@ set_property(DIRECTORY APPEND PROPERTY COMPILE_DEFINITIONS
 	$<$<CONFIG:Release>:NDEBUG=1>
 	)
 
+if(MSVC)
+
+   set(CMAKE_PREFIX_PATH ${CMAKE_CURRENT_SOURCE_DIR}/libs/windows)
+	
+	find_library(FFTW3_LIBRARIES NAMES  libfftw3-3 libfftw3f-3 libfftw3l-3)
+	find_path(FFTW3_INCLUDE_DIRS fftw3.h)
+endif()
 
 set(SOURCE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/Source)
 file(GLOB_RECURSE SRC_FILES LIST_DIRECTORIES false "${SOURCE_PATH}/*.cpp" "${SOURCE_PATH}/*.h")
@@ -38,6 +45,7 @@ set(CONFIGURATION_FOLDER $<$<CONFIG:Debug>:Debug>$<$<NOT:$<CONFIG:Debug>>:Releas
 
 list(APPEND CMAKE_PREFIX_PATH ${GUI_COMMONLIB_DIR} ${GUI_COMMONLIB_DIR}/${CONFIGURATION_FOLDER})
 
+
 if (APPLE)
 	add_library(${PLUGIN_NAME} MODULE ${SRC_FILES})
 else()
@@ -45,7 +53,7 @@ else()
 endif()
 
 target_compile_features(${PLUGIN_NAME} PUBLIC cxx_auto_type cxx_generalized_initializers cxx_std_17)
-target_include_directories(${PLUGIN_NAME} PUBLIC ${GUI_BASE_DIR}/JuceLibraryCode ${GUI_BASE_DIR}/JuceLibraryCode/modules ${GUI_BASE_DIR}/Plugins/Headers ${GUI_COMMONLIB_DIR}/include)
+target_include_directories(${PLUGIN_NAME} PUBLIC ${GUI_BASE_DIR}/JuceLibraryCode ${GUI_BASE_DIR}/JuceLibraryCode/modules ${GUI_BASE_DIR}/Plugins/Headers ${GUI_COMMONLIB_DIR}/include ${FFTW3_INCLUDE_DIRS})
 
 set(GUI_BIN_DIR ${GUI_BASE_DIR}/Build/${CONFIGURATION_FOLDER})
 
@@ -59,14 +67,14 @@ endif()
 
 #Libraries and compiler options
 if(MSVC)
-	target_link_libraries(${PLUGIN_NAME} ${GUI_BIN_DIR}/open-ephys.lib)
+	target_link_libraries(${PLUGIN_NAME} ${GUI_BIN_DIR}/open-ephys.lib ${FFTW3_LIBRARIES})
 	target_compile_options(${PLUGIN_NAME} PRIVATE /sdl- /W0)
 	
 	install(TARGETS ${PLUGIN_NAME} RUNTIME DESTINATION ${GUI_BIN_DIR}/plugins  CONFIGURATIONS ${CMAKE_CONFIGURATION_TYPES})
 
 	set(CMAKE_PREFIX_PATH ${CMAKE_CURRENT_SOURCE_DIR}/../libs)
 elseif(LINUX)
-	target_link_libraries(${PLUGIN_NAME} GL X11 Xext Xinerama asound dl freetype pthread rt)
+	target_link_libraries(${PLUGIN_NAME} GL X11 Xext Xinerama asound dl freetype pthread rt ${FFTW3_LIBRARIES})
 	set_property(TARGET ${PLUGIN_NAME} APPEND_STRING PROPERTY LINK_FLAGS
 		"-fvisibility=hidden -fPIC -rdynamic -Wl,-rpath,'$$ORIGIN/../shared'")
 	target_compile_options(${PLUGIN_NAME} PRIVATE -fPIC -rdynamic)
