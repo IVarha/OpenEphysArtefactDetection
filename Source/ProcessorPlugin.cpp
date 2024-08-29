@@ -217,7 +217,6 @@ double maxDiffPSD(const std::vector<double>& signal, double fs)
                 maxDiff = diff;
             }
         }
-        
         return maxDiff;
 
 }
@@ -259,7 +258,7 @@ void ProcessorPlugin::process(AudioBuffer<float> &buffer)
                 double md = maxDiffPSD(bufferRecording, sampleRate);
                 // print to console
                 //Estd::cout << "Max diff PSD: " << md << std::endl;
-                if (md < 0.0085) {
+                if (md < 0.1) {
                     // send to output
                     for (samp = 0; samp < nSamples; ++samp)
                     {
@@ -270,7 +269,7 @@ void ProcessorPlugin::process(AudioBuffer<float> &buffer)
                     // send to output
                     for (samp = 0; samp < nSamples; ++samp)
                     {
-                        buffer.setSample(chan, samp, 0);
+                        buffer.setSample(chan, samp, std::numeric_limits<double>::quiet_NaN());
                     }
                 }
                 ch++;

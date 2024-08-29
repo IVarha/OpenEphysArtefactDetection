@@ -26,7 +26,7 @@ ProcessorPluginEditor::ProcessorPluginEditor(GenericProcessor *parentNode)
     : GenericEditor(parentNode)
 {
 
-    desiredWidth = 150;
+    desiredWidth = 170;
     addTextBoxParameterEditor("window_ms", 10, 62);
     addSelectedChannelsParameterEditor("Channels", 10, 108);
 }
